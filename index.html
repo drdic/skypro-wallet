@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script>
+      // Применяем сохранённую тему синхронно до первой отрисовки,
+      // чтобы избежать вспышки светлой темы при обновлении страницы.
+      (function () {
+        try {
+          var stored = localStorage.getItem('vueuse-color-scheme')
+          var isDark =
+            stored === 'dark' ||
+            (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          if (isDark) {
+            document.documentElement.classList.add('dark')
+          }
+          document.documentElement.style.backgroundColor = isDark ? '#151419' : '#f4f5f6'
+        } catch (e) {
+          /* игнорируем недоступность localStorage */
+        }
+      })()
+    </script>
+
+    <title>Skypro.Wallet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

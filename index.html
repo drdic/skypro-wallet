@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <script>
-      // Применяем сохранённую тему синхронно до первой отрисовки,
-      // чтобы избежать вспышки светлой темы при обновлении страницы.
       (function () {
         try {
           var stored = localStorage.getItem('vueuse-color-scheme')
@@ -19,7 +17,7 @@
           }
           document.documentElement.style.backgroundColor = isDark ? '#151419' : '#f4f5f6'
         } catch (e) {
-          /* игнорируем недоступность localStorage */
+          document.documentElement.style.backgroundColor = '#f4f5f6'
         }
       })()
     </script>

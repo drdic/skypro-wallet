@@ -35,7 +35,6 @@ defineProps({
   height: 19px;
 }
 
-/* В тёмной теме заливка логотипа становится светлой */
 .logo__image :deep(svg path) {
   fill: currentColor;
 }

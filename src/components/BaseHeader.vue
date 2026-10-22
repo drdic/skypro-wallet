@@ -49,6 +49,7 @@ const links = [
 
 .header__block > .logo {
   flex: 1;
+  justify-content: flex-start;
 }
 
 .header__nav {
@@ -56,11 +57,6 @@ const links = [
   align-items: center;
   justify-content: center;
   gap: 40px;
-}
-
-.header__exit {
-  flex: 1;
-  text-align: right;
 }
 
 .header__link {

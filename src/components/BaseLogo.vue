@@ -19,12 +19,14 @@ defineProps({
 .logo {
   display: inline-flex;
   align-items: center;
+  line-height: 0;
   color: var(--color-text-primary);
 }
 
 .logo__image {
   display: inline-flex;
   align-items: center;
+  line-height: 0;
 }
 
 .logo__image :deep(svg) {

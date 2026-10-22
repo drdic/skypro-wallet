@@ -40,7 +40,7 @@ const links = [
 }
 
 .header__block {
-  height: 70px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -73,6 +73,8 @@ const links = [
 }
 
 .header__exit {
+  flex: 1;
+  text-align: right;
   border: none;
   background: transparent;
   font-size: 14px;

@@ -47,8 +47,15 @@ const password = ref('')
 }
 
 .auth__header {
-  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  height: 64px;
   background-color: var(--color-bg-white);
+}
+
+.auth__header .container {
+  display: flex;
+  align-items: center;
 }
 
 .auth__content {

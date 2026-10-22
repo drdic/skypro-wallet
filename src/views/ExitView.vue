@@ -74,7 +74,7 @@ import BaseLogo from '@/components/BaseLogo.vue'
   background-color: var(--color-accent);
   color: var(--color-text-white);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .auth__button:hover {

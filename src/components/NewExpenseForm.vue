@@ -121,7 +121,7 @@ const categories = CATEGORIES
 
 .new-expense__label {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 22px;
   color: var(--color-text-primary);
 }

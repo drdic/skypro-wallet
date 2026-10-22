@@ -37,7 +37,7 @@ defineProps({
   border: none;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 20px;
   transition:
     background-color 0.2s ease-in-out,

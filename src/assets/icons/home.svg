@@ -1,4 +1,8 @@
 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M2.5 7.2L8 2.6L13.5 7.2V12.6C13.5 13.3 12.9 13.9 12.2 13.9H3.8C3.1 13.9 2.5 13.3 2.5 12.6V7.2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
-  <path d="M6.4 13.9V9.6H9.6V13.9" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    fill="currentColor"
+    d="M8 1.5 14.65 7.1c.4.34.15 1.05-.37 1.05-.2 0-.37-.07-.52-.2l-.55-.47v4.62c0 .9-.72 1.6-1.6 1.6H4.39c-.88 0-1.6-.7-1.6-1.6V7.48l-.55.47a.78.78 0 0 1-.52.2c-.52 0-.77-.71-.37-1.05L8 1.5Zm.85 5.85H7.15c-.47 0-.85.38-.85.85v4.5h2.55v-4.5c0-.47-.38-.85-.85-.85Z"
+  />
 </svg>

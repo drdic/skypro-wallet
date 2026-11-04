@@ -1,0 +1,114 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+a,
+a:visited {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button,
+._btn {
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+ul li {
+  list-style: none;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+}
+
+#app {
+  min-height: 100vh;
+}
+
+._hover01,
+._hover02,
+._hover03 {
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
+}
+
+._hover01:hover,
+._hover01:active {
+  background-color: var(--color-accent-hover);
+}
+
+._hover02:hover,
+._hover02:active {
+  color: var(--color-accent-hover);
+}
+
+._hover03:hover,
+._hover03:active {
+  background-color: var(--color-accent) !important;
+  color: var(--color-text-white) !important;
+}
+
+._hide {
+  display: none;
+}
+
+._dark {
+  display: none;
+}
+
+.dark .header__logo._light {
+  display: none;
+}
+
+.dark .header__logo._dark {
+  display: block;
+}
+
+.wrapper {
+  max-width: 100%;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+.container {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 120px;
+}
+
+@media screen and (max-width: 1200px) {
+  .container {
+    padding: 0 40px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+}

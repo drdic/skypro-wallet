@@ -60,3 +60,17 @@ export const formatMonthTitle = (date) => {
 
   return `${month.charAt(0).toUpperCase()}${month.slice(1)} ${date.getFullYear()}`
 }
+
+export const formatDateLong = (value) => {
+  const date = parseDate(value)
+
+  if (!date) {
+    return String(value ?? '')
+  }
+
+  return date.toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+}

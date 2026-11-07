@@ -11,7 +11,7 @@
       </p>
 
       <div class="page__grid">
-        <PeriodCalendar v-model="selectedDate" />
+        <PeriodCalendar v-model="selectedPeriod" />
         <CategoryChart :amounts="amounts" :caption="caption" :is-loading="isLoading" />
       </div>
     </main>
@@ -30,22 +30,39 @@ import PeriodCalendar from '@/components/PeriodCalendar.vue'
 import { fromApiCategory } from '@/constants/categories.js'
 import { removeSession } from '@/services/session.js'
 import { getTransactions } from '@/services/wallet.js'
-import { formatDate, parseDate, toISODate } from '@/utils/format.js'
+import { formatDateLong, toISODate } from '@/utils/format.js'
 
 const router = useRouter()
 
 const transactions = ref([])
-const selectedDate = ref(toISODate(new Date()))
+const selectedPeriod = ref({ start: toISODate(new Date()), end: '' })
 const isLoading = ref(false)
 const loadError = ref('')
 const isExitModalOpen = ref(false)
 
+const period = computed(() => {
+  const start = toISODate(selectedPeriod.value?.start)
+  const end = toISODate(selectedPeriod.value?.end) || start
+
+  if (!start) {
+    return { start: '', end: '' }
+  }
+
+  return start <= end ? { start, end } : { start: end, end: start }
+})
+
 const amounts = computed(() => {
   const result = {}
-  const target = selectedDate.value
+  const { start, end } = period.value
+
+  if (!start) {
+    return result
+  }
 
   transactions.value.forEach((transaction) => {
-    if (toISODate(transaction.date) !== target) {
+    const date = toISODate(transaction.date)
+
+    if (date < start || date > end) {
       return
     }
 
@@ -57,9 +74,17 @@ const amounts = computed(() => {
 })
 
 const caption = computed(() => {
-  const date = parseDate(selectedDate.value)
+  const { start, end } = period.value
 
-  return date ? `Расходы за ${formatDate(date)}` : 'Выберите дату'
+  if (!start) {
+    return 'Выберите период'
+  }
+
+  if (start === end) {
+    return `Расходы за ${formatDateLong(start)}`
+  }
+
+  return `Расходы за ${formatDateLong(start)} — ${formatDateLong(end)}`
 })
 
 const loadTransactions = async () => {

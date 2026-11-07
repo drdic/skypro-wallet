@@ -3,15 +3,23 @@ import axios from 'axios'
 const API_URL = 'https://wedev-api.sky.pro/api/user'
 
 const makeError = (error, fallback) => {
-  if (error.response) {
+  if (error?.response) {
     const status = error.response.status
     if (status >= 500) {
       return new Error('Сервер недоступен. Попробуйте позже')
     }
-    return new Error(error.response.data?.error || fallback)
+
+    const message =
+      typeof error.response.data === 'string'
+        ? error.response.data
+        : error.response.data?.error || fallback
+    const result = new Error(message)
+    result.status = status
+
+    return result
   }
 
-  if (error.request) {
+  if (error?.request) {
     return new Error('Нет соединения с сервером. Проверьте подключение к интернету')
   }
 

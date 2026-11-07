@@ -43,15 +43,11 @@ import BaseHeader from '@/components/BaseHeader.vue'
 import ExitModal from '@/components/ExitModal.vue'
 import ExpenseTable from '@/components/ExpenseTable.vue'
 import NewExpenseForm from '@/components/NewExpenseForm.vue'
+import { fromApiCategory, toApiCategory } from '@/constants/categories.js'
 import { removeSession } from '@/services/session.js'
 import { createTransaction, deleteTransaction, getTransactions } from '@/services/wallet.js'
 import { toISODate } from '@/utils/format.js'
-import {
-  hasErrors,
-  validateAmount,
-  validateDate,
-  validateDescription,
-} from '@/utils/validation.js'
+import { hasErrors, validateAmount, validateDate, validateDescription } from '@/utils/validation.js'
 
 const router = useRouter()
 
@@ -80,7 +76,7 @@ const formErrors = reactive({
 const mapTransaction = (transaction) => ({
   id: transaction._id,
   description: transaction.description,
-  category: transaction.category,
+  category: fromApiCategory(transaction.category),
   date: transaction.date,
   amount: transaction.sum,
 })
@@ -140,7 +136,7 @@ const addExpense = async () => {
     const transactions = await createTransaction({
       sum: Number(String(form.amount).replace(',', '.')),
       description: form.description.trim(),
-      category: form.category,
+      category: toApiCategory(form.category),
       date: `${form.date}T00:00:00.000Z`,
     })
 

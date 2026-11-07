@@ -27,6 +27,7 @@ import BaseHeader from '@/components/BaseHeader.vue'
 import CategoryChart from '@/components/CategoryChart.vue'
 import ExitModal from '@/components/ExitModal.vue'
 import PeriodCalendar from '@/components/PeriodCalendar.vue'
+import { fromApiCategory } from '@/constants/categories.js'
 import { removeSession } from '@/services/session.js'
 import { getTransactions } from '@/services/wallet.js'
 import { formatDate, parseDate, toISODate } from '@/utils/format.js'
@@ -48,7 +49,8 @@ const amounts = computed(() => {
       return
     }
 
-    result[transaction.category] = (result[transaction.category] || 0) + Number(transaction.sum || 0)
+    const category = fromApiCategory(transaction.category)
+    result[category] = (result[category] || 0) + Number(transaction.sum || 0)
   })
 
   return result

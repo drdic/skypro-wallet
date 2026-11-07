@@ -9,33 +9,39 @@ const getHeaders = () => ({
 })
 
 const makeError = (error, fallback) => {
-  if (error.status) {
+  if (error?.isHandled) {
     return error
   }
 
-  if (error.response) {
+  if (error?.response) {
     const status = error.response.status
     if (status >= 500) {
       return new Error('Сервер недоступен. Попробуйте позже')
     }
 
-    const result = new Error(error.response.data?.error || fallback)
+    const message =
+      typeof error.response.data === 'string'
+        ? error.response.data
+        : error.response.data?.error || fallback
+    const result = new Error(message)
     result.status = status
+    result.isHandled = true
 
     return result
   }
 
-  if (error.request) {
+  if (error?.request) {
     return new Error('Нет соединения с сервером. Проверьте подключение к интернету')
   }
 
   return new Error(fallback)
 }
 
-const extractTransactions = (data) => {
-  if (data && !Array.isArray(data) && data.error) {
+const extractTransactions = (data, status) => {
+  if (data && !Array.isArray(data) && typeof data === 'object' && data.error) {
     const error = new Error(data.error)
-    error.status = 401
+    error.status = status
+    error.isHandled = true
     throw error
   }
 
@@ -52,7 +58,7 @@ export const getTransactions = async () => {
       headers: getHeaders(),
     })
 
-    return extractTransactions(response.data)
+    return extractTransactions(response.data, 401)
   } catch (error) {
     throw makeError(error, 'Не удалось загрузить расходы')
   }
@@ -67,7 +73,7 @@ export const createTransaction = async (data) => {
       },
     })
 
-    return extractTransactions(response.data)
+    return extractTransactions(response.data, response.status)
   } catch (error) {
     throw makeError(error, 'Не удалось добавить расход')
   }
@@ -79,7 +85,7 @@ export const deleteTransaction = async (id) => {
       headers: getHeaders(),
     })
 
-    return extractTransactions(response.data)
+    return extractTransactions(response.data, response.status)
   } catch (error) {
     throw makeError(error, 'Не удалось удалить расход')
   }

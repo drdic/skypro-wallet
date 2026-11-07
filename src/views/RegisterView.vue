@@ -10,16 +10,39 @@
       <div class="auth__card">
         <h1 class="auth__title">Регистрация</h1>
 
-        <form class="auth__form" @submit.prevent>
-          <BaseInput v-model="name" placeholder="Ева Иванова" autocomplete="name" />
-          <BaseInput v-model="email" type="email" placeholder="Эл. почта" autocomplete="email" />
+        <form class="auth__form" novalidate @submit.prevent="submit">
           <BaseInput
-            v-model="password"
+            id="name"
+            v-model="form.name"
+            placeholder="Ева Иванова"
+            autocomplete="name"
+            :error="errors.name"
+            :disabled="isSubmitting"
+          />
+          <BaseInput
+            id="email"
+            v-model="form.login"
+            type="email"
+            placeholder="Эл. почта"
+            autocomplete="email"
+            :error="errors.login"
+            :disabled="isSubmitting"
+          />
+          <BaseInput
+            id="password"
+            v-model="form.password"
             type="password"
             placeholder="Пароль"
             autocomplete="new-password"
+            :error="errors.password"
+            :disabled="isSubmitting"
           />
-          <BaseButton type="submit">Зарегистрироваться</BaseButton>
+
+          <p v-if="serverError" class="auth__error" role="alert">{{ serverError }}</p>
+
+          <BaseButton type="submit" :disabled="isSubmitting">
+            {{ isSubmitting ? 'Регистрируем...' : 'Зарегистрироваться' }}
+          </BaseButton>
         </form>
 
         <p class="auth__hint">Уже есть аккаунт?</p>
@@ -30,14 +53,64 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseLogo from '@/components/BaseLogo.vue'
+import { signUp } from '@/services/auth.js'
+import { saveSession } from '@/services/session.js'
+import { validateLogin, validateName, validatePassword, hasErrors } from '@/utils/validation.js'
 
-const name = ref('')
-const email = ref('')
-const password = ref('')
+const router = useRouter()
+
+const form = reactive({
+  name: '',
+  login: '',
+  password: '',
+})
+
+const errors = reactive({
+  name: '',
+  login: '',
+  password: '',
+})
+
+const serverError = ref('')
+const isSubmitting = ref(false)
+
+const validate = () => {
+  errors.name = validateName(form.name)
+  errors.login = validateLogin(form.login)
+  errors.password = validatePassword(form.password)
+
+  return !hasErrors(errors)
+}
+
+const submit = async () => {
+  serverError.value = ''
+
+  if (!validate()) {
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    const user = await signUp({
+      name: form.name.trim(),
+      login: form.login.trim(),
+      password: form.password,
+    })
+
+    saveSession(user)
+    router.push('/')
+  } catch (error) {
+    serverError.value = error.message
+  } finally {
+    isSubmitting.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -89,6 +162,15 @@ const password = ref('')
   flex-direction: column;
   gap: 14px;
   margin-bottom: 24px;
+}
+
+.auth__error {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background-color: var(--color-danger-light);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-danger);
 }
 
 .auth__hint {

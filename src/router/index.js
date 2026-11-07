@@ -6,6 +6,7 @@ import RegisterView from '@/views/RegisterView.vue'
 import AnalysisView from '@/views/AnalysisView.vue'
 import ExitView from '@/views/ExitView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
+import { isAuthenticated } from '@/services/session.js'
 
 const redirectQuery = window.location.search
 if (redirectQuery.startsWith('?/')) {
@@ -22,11 +23,13 @@ const routes = [
         path: '',
         name: 'home',
         component: HomeView,
+        meta: { requiresAuth: true },
       },
       {
         path: 'analysis',
         name: 'analysis',
         component: AnalysisView,
+        meta: { requiresAuth: true },
       },
       {
         path: 'exit',
@@ -37,11 +40,13 @@ const routes = [
         path: 'login',
         name: 'login',
         component: LoginView,
+        meta: { guestOnly: true },
       },
       {
         path: 'register',
         name: 'register',
         component: RegisterView,
+        meta: { guestOnly: true },
       },
     ],
   },
@@ -55,6 +60,20 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+router.beforeEach((to) => {
+  const authenticated = isAuthenticated()
+
+  if (to.meta.requiresAuth && !authenticated) {
+    return { name: 'login' }
+  }
+
+  if (to.meta.guestOnly && authenticated) {
+    return { name: 'home' }
+  }
+
+  return true
 })
 
 export default router

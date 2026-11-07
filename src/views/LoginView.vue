@@ -10,10 +10,30 @@
       <div class="auth__card">
         <h1 class="auth__title">Вход</h1>
 
-        <form class="auth__form" @submit.prevent>
-          <BaseInput v-model="login" placeholder="ivanova" autocomplete="username" />
-          <BaseInput v-model="password" type="password" placeholder="Пароль" />
-          <BaseButton type="submit">Войти</BaseButton>
+        <form class="auth__form" novalidate @submit.prevent="submit">
+          <BaseInput
+            id="login"
+            v-model="form.login"
+            placeholder="ivanova"
+            autocomplete="username"
+            :error="errors.login"
+            :disabled="isSubmitting"
+          />
+          <BaseInput
+            id="password"
+            v-model="form.password"
+            type="password"
+            placeholder="Пароль"
+            autocomplete="current-password"
+            :error="errors.password"
+            :disabled="isSubmitting"
+          />
+
+          <p v-if="serverError" class="auth__error" role="alert">{{ serverError }}</p>
+
+          <BaseButton type="submit" :disabled="isSubmitting">
+            {{ isSubmitting ? 'Входим...' : 'Войти' }}
+          </BaseButton>
         </form>
 
         <p class="auth__hint">Нужно зарегистрироваться?</p>
@@ -24,13 +44,67 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseLogo from '@/components/BaseLogo.vue'
+import { signIn } from '@/services/auth.js'
+import { saveSession } from '@/services/session.js'
+import { validateLogin, validatePassword, hasErrors } from '@/utils/validation.js'
 
-const login = ref('')
-const password = ref('')
+const router = useRouter()
+
+const form = reactive({
+  login: '',
+  password: '',
+})
+
+const errors = reactive({
+  login: '',
+  password: '',
+})
+
+const serverError = ref('')
+const isSubmitting = ref(false)
+
+const validate = () => {
+  errors.login = validateLogin(form.login)
+  errors.password = validatePassword(form.password)
+
+  return !hasErrors(errors)
+}
+
+const clearErrors = () => {
+  errors.login = ''
+  errors.password = ''
+  serverError.value = ''
+}
+
+const submit = async () => {
+  serverError.value = ''
+
+  if (!validate()) {
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    const user = await signIn({
+      login: form.login.trim(),
+      password: form.password,
+    })
+
+    saveSession(user)
+    clearErrors()
+    router.push('/')
+  } catch (error) {
+    serverError.value = error.message
+  } finally {
+    isSubmitting.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -82,6 +156,15 @@ const password = ref('')
   flex-direction: column;
   gap: 14px;
   margin-bottom: 24px;
+}
+
+.auth__error {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background-color: var(--color-danger-light);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-danger);
 }
 
 .auth__hint {

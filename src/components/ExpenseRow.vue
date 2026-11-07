@@ -2,12 +2,13 @@
   <div class="expense-row">
     <span class="expense-row__cell expense-row__description">{{ expense.description }}</span>
     <span class="expense-row__cell">{{ category?.title }}</span>
-    <span class="expense-row__cell">{{ expense.date }}</span>
+    <span class="expense-row__cell">{{ formatDate(expense.date) }}</span>
     <span class="expense-row__cell">{{ formatAmount(expense.amount) }}</span>
     <button
       type="button"
       class="expense-row__delete _hover02"
-      aria-label="Удалить расход"
+      :disabled="isRemoving"
+      :aria-label="`Удалить расход ${expense.description}`"
       @click="$emit('remove', expense.id)"
     >
       <BaseIcon name="trash" :size="18" />
@@ -19,12 +20,16 @@
 import { computed } from 'vue'
 import BaseIcon from '@/components/BaseIcon.vue'
 import { getCategoryById } from '@/constants/categories.js'
-import { formatAmount } from '@/utils/format.js'
+import { formatAmount, formatDate } from '@/utils/format.js'
 
 const props = defineProps({
   expense: {
     type: Object,
     required: true,
+  },
+  isRemoving: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -56,6 +61,11 @@ const category = computed(() => getCategoryById(props.expense.category))
   border-radius: 6px;
   background: transparent;
   color: var(--color-text-secondary);
+}
+
+.expense-row__delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .expense-row__cell {

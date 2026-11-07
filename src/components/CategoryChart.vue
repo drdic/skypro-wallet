@@ -3,7 +3,9 @@
     <h2 class="chart__total">{{ formatAmount(total) }}</h2>
     <p class="chart__caption">{{ caption }}</p>
 
-    <div class="chart__bars">
+    <p v-if="isLoading" class="chart__empty">Загружаем данные...</p>
+
+    <div v-else class="chart__bars">
       <div v-for="item in items" :key="item.id" class="chart__item">
         <span class="chart__value">{{ formatAmount(item.amount) }}</span>
         <div class="chart__bar-wrapper">
@@ -30,7 +32,11 @@ const props = defineProps({
   },
   caption: {
     type: String,
-    default: 'Расходы за 10 июля 2024',
+    default: 'Выберите дату',
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -112,6 +118,13 @@ const getHeight = (amount) => (amount ? Math.max((amount / maxAmount.value) * 30
   line-height: 16px;
   color: var(--color-text-secondary);
   text-align: center;
+}
+
+.chart__empty {
+  padding: 40px 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-secondary);
 }
 
 @media screen and (max-width: 768px) {

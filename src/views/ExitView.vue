@@ -17,7 +17,13 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import BaseLogo from '@/components/BaseLogo.vue'
+import { removeSession } from '@/services/session.js'
+
+onMounted(() => {
+  removeSession()
+})
 </script>
 
 <style scoped>

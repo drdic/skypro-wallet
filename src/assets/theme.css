@@ -19,6 +19,9 @@
   --color-accent-light: #f1ebfd;
   --color-accent-border: #d9b6ff;
 
+  --color-danger: #cc2b2b;
+  --color-danger-light: #fdeaea;
+
   --color-category-food: #d9b6ff;
   --color-category-transport: #ffb53d;
   --color-category-home: #b0aeff;
@@ -47,4 +50,7 @@
   --color-accent-hover: #8a55f0;
   --color-accent-light: #2b2140;
   --color-accent-border: #7334ea;
+
+  --color-danger: #ff6b6b;
+  --color-danger-light: #3a1f24;
 }

@@ -2,13 +2,15 @@
   <section class="new-expense">
     <h2 class="new-expense__title">Новый расход</h2>
 
-    <form class="new-expense__form" @submit.prevent="$emit('submit')">
+    <form class="new-expense__form" novalidate @submit.prevent="$emit('submit')">
       <div class="new-expense__field">
         <label class="new-expense__label" for="expense-description">Описание</label>
         <BaseInput
           id="expense-description"
           :model-value="description"
           placeholder="Введите описание"
+          :error="errors.description"
+          :disabled="disabled"
           @update:model-value="$emit('update:description', $event)"
         />
       </div>
@@ -22,12 +24,14 @@
             type="button"
             class="new-expense__category"
             :class="{ 'new-expense__category_active': category.id === selectedCategory }"
+            :disabled="disabled"
             @click="$emit('update:selectedCategory', category.id)"
           >
             <BaseIcon :name="category.icon" :size="16" />
             <span>{{ category.title }}</span>
           </button>
         </div>
+        <p v-if="errors.category" class="new-expense__error">{{ errors.category }}</p>
       </div>
 
       <div class="new-expense__field">
@@ -35,7 +39,10 @@
         <BaseInput
           id="expense-date"
           :model-value="date"
-          placeholder="Введите дату"
+          type="date"
+          placeholder="ГГГГ-ММ-ДД"
+          :error="errors.date"
+          :disabled="disabled"
           @update:model-value="$emit('update:date', $event)"
         />
       </div>
@@ -45,12 +52,19 @@
         <BaseInput
           id="expense-amount"
           :model-value="amount"
+          inputmode="decimal"
           placeholder="Введите сумму"
+          :error="errors.amount"
+          :disabled="disabled"
           @update:model-value="$emit('update:amount', $event)"
         />
       </div>
 
-      <BaseButton type="submit">Добавить новый расход</BaseButton>
+      <p v-if="errors.form" class="new-expense__error" role="alert">{{ errors.form }}</p>
+
+      <BaseButton type="submit" :disabled="disabled">
+        {{ disabled ? 'Добавляем...' : 'Добавить новый расход' }}
+      </BaseButton>
     </form>
   </section>
 </template>
@@ -77,6 +91,14 @@ defineProps({
   amount: {
     type: [String, Number],
     default: '',
+  },
+  errors: {
+    type: Object,
+    default: () => ({}),
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -126,6 +148,12 @@ const categories = CATEGORIES
   color: var(--color-text-primary);
 }
 
+.new-expense__error {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-danger);
+}
+
 .new-expense__categories {
   display: flex;
   flex-wrap: wrap;
@@ -149,13 +177,18 @@ const categories = CATEGORIES
     color 0.2s ease-in-out;
 }
 
-.new-expense__category:hover {
+.new-expense__category:hover:not(:disabled) {
   background-color: var(--color-accent-light);
 }
 
 .new-expense__category_active {
   background-color: var(--color-accent-light);
   color: var(--color-accent);
+}
+
+.new-expense__category:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 @media screen and (max-width: 768px) {

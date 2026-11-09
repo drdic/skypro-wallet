@@ -11,13 +11,18 @@
     </div>
 
     <div class="expense-table__body">
-      <ExpenseRow
-        v-for="expense in expenses"
-        :key="expense.id"
-        :expense="expense"
-        @remove="$emit('remove', $event)"
-      />
-      <p v-if="!expenses.length" class="expense-table__empty">Пока нет расходов</p>
+      <p v-if="isLoading" class="expense-table__empty">Загружаем расходы...</p>
+
+      <template v-else>
+        <ExpenseRow
+          v-for="expense in expenses"
+          :key="expense.id"
+          :expense="expense"
+          :is-removing="removingId === expense.id"
+          @remove="$emit('remove', $event)"
+        />
+        <p v-if="!expenses.length" class="expense-table__empty">Пока нет расходов</p>
+      </template>
     </div>
   </section>
 </template>
@@ -29,6 +34,14 @@ defineProps({
   expenses: {
     type: Array,
     default: () => [],
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  removingId: {
+    type: [String, Number],
+    default: null,
   },
 })
 

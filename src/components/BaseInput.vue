@@ -1,16 +1,29 @@
 <template>
-  <input
-    :type="type"
-    :value="modelValue"
-    :placeholder="placeholder"
-    :autocomplete="autocomplete"
-    class="base-input"
-    @input="$emit('update:modelValue', $event.target.value)"
-  />
+  <div class="base-input-field">
+    <input
+      :id="id"
+      :type="type"
+      :value="modelValue"
+      :placeholder="placeholder"
+      :autocomplete="autocomplete"
+      :disabled="disabled"
+      :aria-invalid="Boolean(error)"
+      :aria-describedby="error ? `${id}-error` : undefined"
+      :inputmode="inputmode"
+      class="base-input"
+      :class="{ 'base-input_invalid': error }"
+      @input="$emit('update:modelValue', $event.target.value)"
+    />
+    <p v-if="error" :id="`${id}-error`" class="base-input__error">{{ error }}</p>
+  </div>
 </template>
 
 <script setup>
 defineProps({
+  id: {
+    type: String,
+    default: 'base-input',
+  },
   modelValue: {
     type: [String, Number],
     default: '',
@@ -27,12 +40,31 @@ defineProps({
     type: String,
     default: 'off',
   },
+  inputmode: {
+    type: String,
+    default: undefined,
+  },
+  error: {
+    type: String,
+    default: '',
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 defineEmits(['update:modelValue'])
 </script>
 
 <style scoped>
+.base-input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
 .base-input {
   width: 100%;
   height: 40px;
@@ -56,5 +88,22 @@ defineEmits(['update:modelValue'])
   outline: none;
   border-color: var(--color-accent);
   background-color: var(--color-accent-light);
+}
+
+.base-input_invalid,
+.base-input_invalid:focus {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-light);
+}
+
+.base-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.base-input__error {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-danger);
 }
 </style>

@@ -1,46 +1,34 @@
 <template>
-  <div class="auth">
-    <div class="auth__header">
-      <div class="container">
-        <BaseLogo to="/login" />
-      </div>
-    </div>
+  <AuthLayout title="Вход">
+    <form class="auth__form" novalidate @submit.prevent="submit">
+      <BaseInput
+        id="login"
+        v-model="form.login"
+        placeholder="ivanova"
+        autocomplete="username"
+        :error="errors.login"
+        :disabled="isSubmitting"
+      />
+      <BaseInput
+        id="password"
+        v-model="form.password"
+        type="password"
+        placeholder="Пароль"
+        autocomplete="current-password"
+        :error="errors.password"
+        :disabled="isSubmitting"
+      />
 
-    <div class="auth__content">
-      <div class="auth__card">
-        <h1 class="auth__title">Вход</h1>
+      <p v-if="serverError" class="auth__error" role="alert">{{ serverError }}</p>
 
-        <form class="auth__form" novalidate @submit.prevent="submit">
-          <BaseInput
-            id="login"
-            v-model="form.login"
-            placeholder="ivanova"
-            autocomplete="username"
-            :error="errors.login"
-            :disabled="isSubmitting"
-          />
-          <BaseInput
-            id="password"
-            v-model="form.password"
-            type="password"
-            placeholder="Пароль"
-            autocomplete="current-password"
-            :error="errors.password"
-            :disabled="isSubmitting"
-          />
+      <BaseButton type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Входим...' : 'Войти' }}
+      </BaseButton>
+    </form>
 
-          <p v-if="serverError" class="auth__error" role="alert">{{ serverError }}</p>
-
-          <BaseButton type="submit" :disabled="isSubmitting">
-            {{ isSubmitting ? 'Входим...' : 'Войти' }}
-          </BaseButton>
-        </form>
-
-        <p class="auth__hint">Нужно зарегистрироваться?</p>
-        <router-link to="/register" class="auth__link">Регистрируйтесь здесь</router-link>
-      </div>
-    </div>
-  </div>
+    <p class="auth__hint">Нужно зарегистрироваться?</p>
+    <router-link to="/register" class="auth__link">Регистрируйтесь здесь</router-link>
+  </AuthLayout>
 </template>
 
 <script setup>
@@ -48,10 +36,10 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
-import BaseLogo from '@/components/BaseLogo.vue'
+import AuthLayout from '@/layout/AuthLayout.vue'
 import { signIn } from '@/services/auth.js'
 import { saveSession } from '@/services/session.js'
-import { validateLogin, validatePassword, hasErrors } from '@/utils/validation.js'
+import { hasErrors, validateLogin, validatePassword } from '@/utils/validation.js'
 
 const router = useRouter()
 
@@ -75,12 +63,6 @@ const validate = () => {
   return !hasErrors(errors)
 }
 
-const clearErrors = () => {
-  errors.login = ''
-  errors.password = ''
-  serverError.value = ''
-}
-
 const submit = async () => {
   serverError.value = ''
 
@@ -97,8 +79,7 @@ const submit = async () => {
     })
 
     saveSession(user)
-    clearErrors()
-    router.push('/')
+    router.push({ name: 'home' })
   } catch (error) {
     serverError.value = error.message
   } finally {
@@ -108,49 +89,6 @@ const submit = async () => {
 </script>
 
 <style scoped>
-.auth {
-  min-height: 100vh;
-  background-color: var(--color-bg);
-}
-
-.auth__header {
-  display: flex;
-  align-items: center;
-  height: 64px;
-  background-color: var(--color-bg-white);
-}
-
-.auth__header .container {
-  display: flex;
-  align-items: center;
-}
-
-.auth__content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 64px);
-  padding: 40px 16px;
-}
-
-.auth__card {
-  width: 100%;
-  max-width: 380px;
-  padding: 40px;
-  border-radius: 20px;
-  background-color: var(--color-bg-white);
-  box-shadow: 0 20px 50px var(--color-shadow-card);
-}
-
-.auth__title {
-  margin-bottom: 28px;
-  text-align: center;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 34px;
-  color: var(--color-text-primary);
-}
-
 .auth__form {
   display: flex;
   flex-direction: column;

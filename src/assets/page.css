@@ -1,0 +1,92 @@
+/* Общие стили страниц приложения (главная и аналитика) */
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+.page__content {
+  padding-top: 40px;
+  padding-bottom: 60px;
+}
+
+.page__title {
+  margin-bottom: 24px;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 48px;
+  color: var(--color-text-primary);
+}
+
+.page__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.page__grid_reverse {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+}
+
+.page__column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.page__alert {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background-color: var(--color-danger-light);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-danger);
+}
+
+.page__column > .page__alert {
+  margin-bottom: 0;
+}
+
+.page__retry {
+  margin-left: 8px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--color-danger);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media screen and (max-width: 1000px) {
+  .page__grid,
+  .page__grid_reverse {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .page__content {
+    padding-top: 24px;
+    padding-bottom: 40px;
+  }
+
+  .page__title {
+    margin-bottom: 16px;
+    font-size: 28px;
+    line-height: 34px;
+  }
+
+  .page__grid,
+  .page__grid_reverse {
+    gap: 16px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .page__title {
+    font-size: 24px;
+    line-height: 30px;
+  }
+}

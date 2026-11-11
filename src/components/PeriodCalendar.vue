@@ -273,4 +273,26 @@ watch(
     height: 260px;
   }
 }
+
+@media screen and (max-width: 375px) {
+  .period {
+    padding: 16px 12px;
+    border-radius: 16px;
+  }
+
+  .period__title {
+    font-size: 20px;
+    line-height: 26px;
+  }
+
+  .period__weekdays,
+  .period__grid {
+    gap: 3px;
+  }
+
+  .period__day {
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
 </style>

@@ -11,7 +11,7 @@
         <div class="chart__bar-wrapper">
           <div
             class="chart__bar"
-            :style="{ height: `${getHeight(item.amount)}px`, backgroundColor: item.color }"
+            :style="{ height: `${getHeight(item.amount)}%`, backgroundColor: item.color }"
           />
         </div>
         <span class="chart__label">{{ item.title }}</span>
@@ -51,7 +51,7 @@ const total = computed(() => items.value.reduce((sum, item) => sum + item.amount
 
 const maxAmount = computed(() => Math.max(...items.value.map((item) => item.amount), 1))
 
-const getHeight = (amount) => (amount ? Math.max((amount / maxAmount.value) * 300, 4) : 4)
+const getHeight = (amount) => (amount ? Math.max((amount / maxAmount.value) * 100, 1.5) : 1.5)
 </script>
 
 <style scoped>
@@ -134,10 +134,38 @@ const getHeight = (amount) => (amount ? Math.max((amount / maxAmount.value) * 30
 
   .chart__bars {
     gap: 8px;
+    min-height: 280px;
+  }
+
+  .chart__bar-wrapper {
+    height: 200px;
+  }
+
+  .chart__value {
+    font-size: 13px;
+    line-height: 18px;
   }
 
   .chart__label {
     font-size: 10px;
+    line-height: 14px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .chart__bars {
+    gap: 4px;
+  }
+
+  .chart__value {
+    font-size: 11px;
+    line-height: 16px;
+  }
+
+  .chart__label {
+    font-size: 9px;
+    line-height: 12px;
+    word-break: break-word;
   }
 }
 </style>

@@ -1,55 +1,43 @@
 <template>
-  <div class="auth">
-    <div class="auth__header">
-      <div class="container">
-        <BaseLogo to="/register" />
-      </div>
-    </div>
+  <AuthLayout title="Регистрация" logo-to="/register">
+    <form class="auth__form" novalidate @submit.prevent="submit">
+      <BaseInput
+        id="name"
+        v-model="form.name"
+        placeholder="Ева Иванова"
+        autocomplete="name"
+        :error="errors.name"
+        :disabled="isSubmitting"
+      />
+      <BaseInput
+        id="email"
+        v-model="form.login"
+        type="email"
+        placeholder="Эл. почта"
+        autocomplete="email"
+        :error="errors.login"
+        :disabled="isSubmitting"
+      />
+      <BaseInput
+        id="password"
+        v-model="form.password"
+        type="password"
+        placeholder="Пароль"
+        autocomplete="new-password"
+        :error="errors.password"
+        :disabled="isSubmitting"
+      />
 
-    <div class="auth__content">
-      <div class="auth__card">
-        <h1 class="auth__title">Регистрация</h1>
+      <p v-if="serverError" class="auth__error" role="alert">{{ serverError }}</p>
 
-        <form class="auth__form" novalidate @submit.prevent="submit">
-          <BaseInput
-            id="name"
-            v-model="form.name"
-            placeholder="Ева Иванова"
-            autocomplete="name"
-            :error="errors.name"
-            :disabled="isSubmitting"
-          />
-          <BaseInput
-            id="email"
-            v-model="form.login"
-            type="email"
-            placeholder="Эл. почта"
-            autocomplete="email"
-            :error="errors.login"
-            :disabled="isSubmitting"
-          />
-          <BaseInput
-            id="password"
-            v-model="form.password"
-            type="password"
-            placeholder="Пароль"
-            autocomplete="new-password"
-            :error="errors.password"
-            :disabled="isSubmitting"
-          />
+      <BaseButton type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Регистрируем...' : 'Зарегистрироваться' }}
+      </BaseButton>
+    </form>
 
-          <p v-if="serverError" class="auth__error" role="alert">{{ serverError }}</p>
-
-          <BaseButton type="submit" :disabled="isSubmitting">
-            {{ isSubmitting ? 'Регистрируем...' : 'Зарегистрироваться' }}
-          </BaseButton>
-        </form>
-
-        <p class="auth__hint">Уже есть аккаунт?</p>
-        <router-link to="/login" class="auth__link">Войдите здесь</router-link>
-      </div>
-    </div>
-  </div>
+    <p class="auth__hint">Уже есть аккаунт?</p>
+    <router-link to="/login" class="auth__link">Войдите здесь</router-link>
+  </AuthLayout>
 </template>
 
 <script setup>
@@ -57,10 +45,10 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
-import BaseLogo from '@/components/BaseLogo.vue'
+import AuthLayout from '@/layout/AuthLayout.vue'
 import { signUp } from '@/services/auth.js'
 import { saveSession } from '@/services/session.js'
-import { validateLogin, validateName, validatePassword, hasErrors } from '@/utils/validation.js'
+import { hasErrors, validateLogin, validateName, validatePassword } from '@/utils/validation.js'
 
 const router = useRouter()
 
@@ -104,7 +92,7 @@ const submit = async () => {
     })
 
     saveSession(user)
-    router.push('/')
+    router.push({ name: 'home' })
   } catch (error) {
     serverError.value = error.message
   } finally {
@@ -114,49 +102,6 @@ const submit = async () => {
 </script>
 
 <style scoped>
-.auth {
-  min-height: 100vh;
-  background-color: var(--color-bg);
-}
-
-.auth__header {
-  display: flex;
-  align-items: center;
-  height: 64px;
-  background-color: var(--color-bg-white);
-}
-
-.auth__header .container {
-  display: flex;
-  align-items: center;
-}
-
-.auth__content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 64px);
-  padding: 40px 16px;
-}
-
-.auth__card {
-  width: 100%;
-  max-width: 380px;
-  padding: 40px;
-  border-radius: 20px;
-  background-color: var(--color-bg-white);
-  box-shadow: 0 20px 50px var(--color-shadow-card);
-}
-
-.auth__title {
-  margin-bottom: 28px;
-  text-align: center;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 34px;
-  color: var(--color-text-primary);
-}
-
 .auth__form {
   display: flex;
   flex-direction: column;

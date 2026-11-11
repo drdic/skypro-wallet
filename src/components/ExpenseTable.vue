@@ -95,13 +95,14 @@ defineEmits(['remove'])
     padding: 20px 16px;
   }
 
+  /* На узких экранах строки перестраиваются в карточки, шапка не нужна */
   .expense-table__head {
-    grid-template-columns: 1fr 1fr;
+    display: none;
   }
 
-  .expense-table__head-cell:nth-child(3),
-  .expense-table__head-cell:nth-child(4) {
-    display: none;
+  .expense-table__body {
+    max-height: none;
+    padding-right: 0;
   }
 }
 </style>

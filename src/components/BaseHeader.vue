@@ -92,5 +92,27 @@ const links = [
   .header__nav {
     gap: 12px;
   }
+
+  .header__link,
+  .header__exit {
+    font-size: 13px;
+    line-height: 18px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .header__block {
+    gap: 8px;
+  }
+
+  .header__nav {
+    gap: 8px;
+  }
+
+  .header__link,
+  .header__exit {
+    font-size: 12px;
+    line-height: 16px;
+  }
 }
 </style>

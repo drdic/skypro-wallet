@@ -2,6 +2,13 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const AMOUNT_PATTERN = /^\d+([.,]\d{1,2})?$/
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
+const MIN_LOGIN_LENGTH = 3
+const MIN_PASSWORD_LENGTH = 6
+const MIN_NAME_LENGTH = 3
+const MIN_DESCRIPTION_LENGTH = 4
+const MAX_DESCRIPTION_LENGTH = 100
+const MAX_AMOUNT = 100000000
+
 const toText = (value) => String(value ?? '').trim()
 
 export const validateLogin = (value) => {
@@ -15,7 +22,7 @@ export const validateLogin = (value) => {
     return 'Логин не должен содержать пробелы'
   }
 
-  if (login.length < 3) {
+  if (login.length < MIN_LOGIN_LENGTH) {
     return 'Логин должен содержать минимум 3 символа'
   }
 
@@ -33,7 +40,7 @@ export const validatePassword = (value) => {
     return 'Введите пароль'
   }
 
-  if (password.length < 6) {
+  if (password.length < MIN_PASSWORD_LENGTH) {
     return 'Пароль должен содержать минимум 6 символов'
   }
 
@@ -47,7 +54,7 @@ export const validateName = (value) => {
     return 'Введите имя'
   }
 
-  if (name.length < 3) {
+  if (name.length < MIN_NAME_LENGTH) {
     return 'Имя должно содержать минимум 3 символа'
   }
 
@@ -61,11 +68,11 @@ export const validateDescription = (value) => {
     return 'Введите описание'
   }
 
-  if (description.length < 4) {
+  if (description.length < MIN_DESCRIPTION_LENGTH) {
     return 'Описание должно содержать минимум 4 символа'
   }
 
-  if (description.length > 100) {
+  if (description.length > MAX_DESCRIPTION_LENGTH) {
     return 'Описание не должно превышать 100 символов'
   }
 
@@ -89,7 +96,7 @@ export const validateAmount = (value) => {
     return 'Сумма должна быть больше нуля'
   }
 
-  if (amount > 100000000) {
+  if (amount > MAX_AMOUNT) {
     return 'Сумма слишком большая'
   }
 

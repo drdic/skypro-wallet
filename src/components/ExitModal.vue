@@ -57,4 +57,24 @@ defineEmits(['close', 'confirm'])
   display: flex;
   gap: 12px;
 }
+
+@media screen and (max-width: 480px) {
+  .exit-modal {
+    padding: 16px;
+  }
+
+  .exit-modal__card {
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+
+  .exit-modal__title {
+    font-size: 20px;
+  }
+
+  .exit-modal__actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+}
 </style>

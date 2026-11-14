@@ -1,9 +1,9 @@
 <template>
   <div class="expense-row">
     <span class="expense-row__cell expense-row__description">{{ expense.description }}</span>
-    <span class="expense-row__cell">{{ category?.title }}</span>
-    <span class="expense-row__cell">{{ formatDate(expense.date) }}</span>
-    <span class="expense-row__cell">{{ formatAmount(expense.amount) }}</span>
+    <span class="expense-row__cell expense-row__category">{{ category?.title }}</span>
+    <span class="expense-row__cell expense-row__date">{{ formatDate(expense.date) }}</span>
+    <span class="expense-row__cell expense-row__amount">{{ formatAmount(expense.amount) }}</span>
     <button
       type="button"
       class="expense-row__delete _hover02"
@@ -76,8 +76,44 @@ const category = computed(() => getCategoryById(props.expense.category))
 
 @media screen and (max-width: 768px) {
   .expense-row {
-    grid-template-columns: 1fr 1fr;
-    row-gap: 4px;
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas:
+      'description description delete'
+      'category date amount';
+    align-items: center;
+    row-gap: 2px;
+    padding: 10px 0;
+  }
+
+  .expense-row__description {
+    grid-area: description;
+    font-weight: 600;
+  }
+
+  .expense-row__category {
+    grid-area: category;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--color-text-secondary);
+  }
+
+  .expense-row__date {
+    grid-area: date;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--color-text-secondary);
+  }
+
+  .expense-row__amount {
+    grid-area: amount;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .expense-row__delete {
+    grid-area: delete;
+    justify-self: end;
   }
 }
 </style>

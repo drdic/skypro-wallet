@@ -15,8 +15,7 @@ a:visited {
   cursor: pointer;
 }
 
-button,
-._btn {
+button {
   cursor: pointer;
   outline: none;
   font-family: inherit;
@@ -45,9 +44,7 @@ body {
   min-height: 100vh;
 }
 
-._hover01,
-._hover02,
-._hover03 {
+._hover02 {
   transition:
     background-color 0.2s ease-in-out,
     color 0.2s ease-in-out,
@@ -55,36 +52,9 @@ body {
     opacity 0.2s ease-in-out;
 }
 
-._hover01:hover,
-._hover01:active {
-  background-color: var(--color-accent-hover);
-}
-
 ._hover02:hover,
 ._hover02:active {
   color: var(--color-accent-hover);
-}
-
-._hover03:hover,
-._hover03:active {
-  background-color: var(--color-accent) !important;
-  color: var(--color-text-white) !important;
-}
-
-._hide {
-  display: none;
-}
-
-._dark {
-  display: none;
-}
-
-.dark .header__logo._light {
-  display: none;
-}
-
-.dark .header__logo._dark {
-  display: block;
 }
 
 .wrapper {

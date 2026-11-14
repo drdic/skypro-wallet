@@ -1,47 +1,18 @@
 import axios from 'axios'
+import { API_BASE_URL, getAuthHeaders, toApiError } from '@/services/api.js'
 
-const API_URL = 'https://wedev-api.sky.pro/api/transactions'
+const TRANSACTIONS_URL = `${API_BASE_URL}/transactions`
+const PERIOD_URL = `${TRANSACTIONS_URL}/period`
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
 
-const getToken = () => localStorage.getItem('token')
-
-const getHeaders = () => ({
-  Authorization: `Bearer ${getToken()}`,
-})
-
-const makeError = (error, fallback) => {
-  if (error?.isHandled) {
-    return error
-  }
-
-  if (error?.response) {
-    const status = error.response.status
-    if (status >= 500) {
-      return new Error('Сервер недоступен. Попробуйте позже')
-    }
-
-    const message =
-      typeof error.response.data === 'string'
-        ? error.response.data
-        : error.response.data?.error || fallback
-    const result = new Error(message)
-    result.status = status
-    result.isHandled = true
-
-    return result
-  }
-
-  if (error?.request) {
-    return new Error('Нет соединения с сервером. Проверьте подключение к интернету')
-  }
-
-  return new Error(fallback)
-}
+const isISODate = (value) => typeof value === 'string' && ISO_DATE_PATTERN.test(value)
 
 const extractTransactions = (data, status) => {
   if (data && !Array.isArray(data) && typeof data === 'object' && data.error) {
     const error = new Error(data.error)
     error.status = status
     error.isHandled = true
+
     throw error
   }
 
@@ -54,39 +25,63 @@ const extractTransactions = (data, status) => {
 
 export const getTransactions = async () => {
   try {
-    const response = await axios.get(API_URL, {
-      headers: getHeaders(),
-    })
+    const response = await axios.get(TRANSACTIONS_URL, { headers: getAuthHeaders() })
 
-    return extractTransactions(response.data, 401)
+    return extractTransactions(response.data, response.status)
   } catch (error) {
-    throw makeError(error, 'Не удалось загрузить расходы')
+    throw toApiError(error, 'Не удалось загрузить расходы')
   }
 }
 
-export const createTransaction = async (data) => {
+export const getTransactionsByPeriod = async ({ start, end } = {}) => {
+  if (!isISODate(start) || !isISODate(end)) {
+    const error = new Error('Укажите корректный период')
+
+    error.status = 400
+    error.isHandled = true
+
+    throw error
+  }
+
   try {
-    const response = await axios.post(API_URL, data, {
+    const response = await axios.post(
+      PERIOD_URL,
+      { start, end },
+      {
+        headers: {
+          ...getAuthHeaders(),
+          'Content-Type': '',
+        },
+      },
+    )
+
+    return extractTransactions(response.data, response.status)
+  } catch (error) {
+    throw toApiError(error, 'Не удалось загрузить расходы за период')
+  }
+}
+
+export const createTransaction = async (transaction) => {
+  try {
+    const response = await axios.post(TRANSACTIONS_URL, transaction, {
       headers: {
-        ...getHeaders(),
+        ...getAuthHeaders(),
         'Content-Type': '',
       },
     })
 
     return extractTransactions(response.data, response.status)
   } catch (error) {
-    throw makeError(error, 'Не удалось добавить расход')
+    throw toApiError(error, 'Не удалось добавить расход')
   }
 }
 
 export const deleteTransaction = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/${id}`, {
-      headers: getHeaders(),
-    })
+    const response = await axios.delete(`${TRANSACTIONS_URL}/${id}`, { headers: getAuthHeaders() })
 
     return extractTransactions(response.data, response.status)
   } catch (error) {
-    throw makeError(error, 'Не удалось удалить расход')
+    throw toApiError(error, 'Не удалось удалить расход')
   }
 }

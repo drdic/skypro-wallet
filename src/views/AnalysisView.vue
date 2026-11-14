@@ -7,7 +7,7 @@
 
       <p v-if="loadError" class="page__alert" role="alert">
         {{ loadError }}
-        <button type="button" class="page__retry" @click="load">Повторить</button>
+        <button type="button" class="page__retry" @click="reload">Повторить</button>
       </p>
 
       <div class="page__grid page__grid_reverse">
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import BaseHeader from '@/components/BaseHeader.vue'
 import CategoryChart from '@/components/CategoryChart.vue'
 import ExitModal from '@/components/ExitModal.vue'
@@ -29,10 +29,11 @@ import PeriodCalendar from '@/components/PeriodCalendar.vue'
 import { useExit } from '@/composables/useExit.js'
 import { useTransactions } from '@/composables/useTransactions.js'
 import { fromApiCategory } from '@/constants/categories.js'
+import { getTransactionsByPeriod } from '@/services/wallet.js'
 import { formatDateLong, toISODate } from '@/utils/format.js'
 
 const { isExitModalOpen, openExitModal, closeExitModal, confirmExit } = useExit()
-const { transactions, isLoading, loadError, load } = useTransactions()
+const { transactions, isLoading, loadError, load } = useTransactions(getTransactionsByPeriod)
 
 const selectedPeriod = ref({ start: toISODate(new Date()), end: '' })
 
@@ -48,26 +49,25 @@ const period = computed(() => {
   return start <= end ? { start, end } : { start: end, end: start }
 })
 
-const amounts = computed(() => {
+const reload = () => {
   const { start, end } = period.value
 
-  if (!start) {
-    return {}
+  if (!start || !end) {
+    transactions.value = []
+    return
   }
 
-  return transactions.value.reduce((result, transaction) => {
-    const date = toISODate(transaction.date)
+  load({ start, end })
+}
 
-    if (date < start || date > end) {
-      return result
-    }
-
+const amounts = computed(() =>
+  transactions.value.reduce((result, transaction) => {
     const category = fromApiCategory(transaction.category)
     result[category] = (result[category] || 0) + Number(transaction.sum || 0)
 
     return result
-  }, {})
-})
+  }, {}),
+)
 
 const caption = computed(() => {
   const { start, end } = period.value
@@ -83,6 +83,6 @@ const caption = computed(() => {
   return `Расходы за ${formatDateLong(start)} — ${formatDateLong(end)}`
 })
 
-onMounted(load)
+watch(period, reload, { immediate: true })
 </script>
 

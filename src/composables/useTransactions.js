@@ -3,21 +3,35 @@ import { useAuthRedirect } from '@/composables/useAuthRedirect.js'
 import { UNAUTHORIZED_STATUS } from '@/services/api.js'
 import { getTransactions } from '@/services/wallet.js'
 
-export const useTransactions = () => {
+export const useTransactions = (loader = getTransactions) => {
   const { redirectToLogin } = useAuthRedirect()
 
   const transactions = ref([])
   const isLoading = ref(false)
   const loadError = ref('')
 
-  const load = async () => {
+  let lastRequestId = 0
+
+  const load = async (...args) => {
+    const requestId = ++lastRequestId
+
     isLoading.value = true
     loadError.value = ''
 
     try {
-      transactions.value = await getTransactions()
+      const result = await loader(...args)
+
+      if (requestId !== lastRequestId) {
+        return false
+      }
+
+      transactions.value = result
       return true
     } catch (error) {
+      if (requestId !== lastRequestId) {
+        return false
+      }
+
       if (error.status === UNAUTHORIZED_STATUS) {
         redirectToLogin()
         return false
@@ -26,7 +40,9 @@ export const useTransactions = () => {
       loadError.value = error.message
       return false
     } finally {
-      isLoading.value = false
+      if (requestId === lastRequestId) {
+        isLoading.value = false
+      }
     }
   }
 

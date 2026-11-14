@@ -2,6 +2,10 @@ import axios from 'axios'
 import { API_BASE_URL, getAuthHeaders, toApiError } from '@/services/api.js'
 
 const TRANSACTIONS_URL = `${API_BASE_URL}/transactions`
+const PERIOD_URL = `${TRANSACTIONS_URL}/period`
+const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+
+const isISODate = (value) => typeof value === 'string' && ISO_DATE_PATTERN.test(value)
 
 const extractTransactions = (data, status) => {
   if (data && !Array.isArray(data) && typeof data === 'object' && data.error) {
@@ -26,6 +30,34 @@ export const getTransactions = async () => {
     return extractTransactions(response.data, response.status)
   } catch (error) {
     throw toApiError(error, 'Не удалось загрузить расходы')
+  }
+}
+
+export const getTransactionsByPeriod = async ({ start, end } = {}) => {
+  if (!isISODate(start) || !isISODate(end)) {
+    const error = new Error('Укажите корректный период')
+
+    error.status = 400
+    error.isHandled = true
+
+    throw error
+  }
+
+  try {
+    const response = await axios.post(
+      PERIOD_URL,
+      { start, end },
+      {
+        headers: {
+          ...getAuthHeaders(),
+          'Content-Type': '',
+        },
+      },
+    )
+
+    return extractTransactions(response.data, response.status)
+  } catch (error) {
+    throw toApiError(error, 'Не удалось загрузить расходы за период')
   }
 }
 
